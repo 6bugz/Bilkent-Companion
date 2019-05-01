@@ -9,11 +9,15 @@
 
     <TextView
         android:id="@+id/tAppName"
-        android:layout_width="132dp"
-        android:layout_height="44dp"
+        android:layout_width="154dp"
+        android:layout_height="68dp"
         android:layout_marginTop="8dp"
         android:text="@string/AppName"
+        android:textAllCaps="true"
         android:textAppearance="@style/TextAppearance.AppCompat"
+        android:textColor="@color/colorAccent"
+        android:textSize="24sp"
+        app:fontFamily="sans-serif-condensed"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
@@ -44,9 +48,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="464dp"
+        android:layout_marginTop="496dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
+        android:background="@color/colorAccent"
         android:text="@string/login"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -60,6 +65,7 @@
         android:layout_marginLeft="32dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
+        android:background="@color/colorAccent"
         android:text="@string/signup"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -76,6 +82,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
+        android:background="@color/colorAccent"
         android:text="@string/fPassword"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -94,6 +101,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
+        android:autofillHints=""
         android:ems="10"
         android:hint="@string/password"
         android:inputType="textPassword"
@@ -101,8 +109,25 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etMail"
-        app:layout_constraintVertical_bias="0.24"
-        android:autofillHints="" />
+        app:layout_constraintVertical_bias="0.24" />
+
+    <TextView
+        android:id="@+id/label"
+        android:layout_width="254dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:textColor="@color/colorAccent"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/bLogin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etPassword"
+        app:layout_constraintVertical_bias="0.052" />
 
 </android.support.constraint.ConstraintLayout>
 
@@ -116,6 +141,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
     private EditText mail;
@@ -123,12 +149,14 @@ public class MainActivity extends AppCompatActivity {
     private Button login;
     private Button signup;
     private Button forgetPassword;
+    private TextView label;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        label = (TextView) findViewById(R.id.label);
         mail = (EditText) findViewById(R.id.etMail);
         password = (EditText) findViewById(R.id.etPassword);
         login = (Button) findViewById(R.id.bLogin);
@@ -153,9 +181,13 @@ public class MainActivity extends AppCompatActivity {
         forgetPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, ForgetPasswordPage.class );
-                intent.putExtra("MAIL", mail.getText().toString());
-                startActivity(intent);
+                if (mail.getText().toString().equals(""))
+                    label.setText("Please enter your e-mail first.");
+                else {
+                    Intent intent = new Intent(MainActivity.this, ForgetPasswordPage.class);
+                    intent.putExtra("MAIL", mail.getText().toString());
+                    startActivity(intent);
+                }
             }
         });
     }
@@ -173,9 +205,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
             else {
-                //mail.setBackground(0);
-                //password.setBackground(0);
                 //give error message?
+                label.setText("Wrong password or mail!");
             }
         }
     }

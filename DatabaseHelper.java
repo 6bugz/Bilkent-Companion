@@ -31,12 +31,9 @@ import java.util.HashMap;
  *      *User ID*
  *                  name
  *                  uid
- *                  status delete
- *                  email add
- *                  firstQuestion
- *                  firstAnswer
- *                  secondQuestion delete
- *                  secondAnswer delete
+ *                  email
+ *                  question
+ *                  answer
  * LostPost
  *          *Post ID*
  *                      name
@@ -66,45 +63,20 @@ public class DatabaseHelper {
                 .child("name").toString();
     }
 
-    public static String getStatus(String uid) {
+    public static String getEmail(String uid) {
         return FirebaseDatabase.getInstance().getReference().child("Users").child(uid)
-                .child("status").toString();
+                .child("email").toString();
     }
 
-    public static String getFQ(String uid) {
+    public static String getQuestion(String uid) {
         return FirebaseDatabase.getInstance().getReference().child("Users").child(uid)
-                .child("firstQuestion").toString();
+                .child("question").toString();
     }
 
-    public static String getFA(String uid) {
+    public static String getAnswer(String uid) {
         return FirebaseDatabase.getInstance().getReference().child("Users").child(uid)
-                .child("firstAnswer").toString();
+                .child("answer").toString();
     }
-
-    public static String getSQ(String uid) {
-        return FirebaseDatabase.getInstance().getReference().child("Users").child(uid)
-                .child("secondQuestion").toString();
-    }
-
-    public static String getSA(String uid) {
-        return FirebaseDatabase.getInstance().getReference().child("Users").child(uid)
-                .child("secondAnswer").toString();
-    }
-
-
-    //SellPost
-    public static String getSellPostUID(String postID) {
-        return FirebaseDatabase.getInstance().getReference().child("SellPost")
-                .child(postID).child("uid").toString();
-    }
-
-    public static String[] getSellPostTags(String postID) {
-        String s = FirebaseDatabase.getInstance().getReference().child("SellPost")
-                .child(postID).child("tags").toString();
-        // TODO add the post's name to the tags also
-        return s.split("\\W+");
-    }
-
 
     //LostPost
     public static String getLostPostUID(String postID) {
@@ -143,6 +115,8 @@ public class DatabaseHelper {
         properties.put("tags", "");
         properties.put("date", "");
         ref.setValue(properties);
+
+        return ref.toString();
     }
 
     public static void setLostPostName(String postID, String data) {
@@ -187,10 +161,98 @@ public class DatabaseHelper {
                     public void onCancelled(DatabaseError databaseError) {
                     }
                 });
+        return lostPosts;
     }
 
-//    public static ???? getLostPostImage( String postID ) {
-//        return FirebaseDatabase.getInstance().getReference().child("LostPost")
+    //SellPost
+    public static String getSellPostUID(String postID) {
+        return FirebaseDatabase.getInstance().getReference().child("SellPost")
+                .child(postID).child("uid").toString();
+    }
+
+    public static String[] getSellPostTags(String postID) {
+        String s = FirebaseDatabase.getInstance().getReference().child("SellPost")
+                .child(postID).child("tags").toString();
+        return s.split("\\W+");
+    }
+
+    public static String getSellPostDate(String postID) {
+        return FirebaseDatabase.getInstance().getReference().child("SellPost")
+                .child(postID).child("date").toString();
+    }
+
+    public static String getSellPostName(String postID) {
+        return FirebaseDatabase.getInstance().getReference().child("SellPost")
+                .child(postID).child("name").toString();
+    }
+
+    public static String getSellPostCategory(String postID) {
+        return FirebaseDatabase.getInstance().getReference().child("SellPost")
+                .child(postID).child("category").toString();
+    }
+
+    public static String initialiseSellPost() {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("SellPost")
+                .push();
+        HashMap<String, String> properties = new HashMap<>();
+        properties.put("name", "");
+        properties.put("uid", "");
+        properties.put("category", "");
+        properties.put("tags", "");
+        properties.put("date", "");
+        ref.setValue(properties);
+
+        return ref.toString();
+    }
+
+    public static void setSellPostName(String postID, String data) {
+        FirebaseDatabase.getInstance().getReference().child("SellPost")
+                .child(postID).child("name").setValue(data);
+    }
+
+    public static void setSellPostUID(String postID, String data) {
+        FirebaseDatabase.getInstance().getReference().child("SellPost")
+                .child(postID).child("uid").setValue(data);
+    }
+
+    public static void setSellPostCategory(String postID, String data) {
+        FirebaseDatabase.getInstance().getReference().child("SellPost")
+                .child(postID).child("category").setValue(data);
+    }
+
+    public static void setSellPostTags(String postID, String data) {
+        FirebaseDatabase.getInstance().getReference().child("SellPost")
+                .child(postID).child("tags").setValue(data);
+    }
+
+    public static void setSellPostDate(String postID, String data) {
+        FirebaseDatabase.getInstance().getReference().child("SellPost")
+                .child(postID).child("date").setValue(data);
+    }
+
+    private static ArrayList<String> sellPosts;
+
+    public static ArrayList<String> getAllSellPosts() {
+        FirebaseDatabase.getInstance().getReference().child("SellPost")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        sellPosts = new ArrayList<>();
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            sellPosts.add((String) snapshot.getValue());
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
+        return sellPosts;
+    }
+
+
+//    public static ???? getSellPostImage( String postID ) {
+//        return FirebaseDatabase.getInstance().getReference().child("SellPost")
 //                .child( postID).child("Date").toString();
 //    }
 }

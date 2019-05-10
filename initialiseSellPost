@@ -1,0 +1,45 @@
+/* initiliaseSellPost edited version
+ * postNo() has not been written yet
+ */
+public static String initialiseSellPost( String [] infos ) {
+            DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+            final DatabaseReference ref = rootRef.child("SellPost").child(getUID() + "" + postNo());
+
+            final String[] information = infos;
+
+            ref.addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                    HashMap<String, String> properties = new HashMap<>();
+                    properties.put("name", information[0]);
+                    properties.put("category", information[1]);
+                    properties.put("price", information[2]);
+                    properties.put("tags", information[3]);
+                    properties.put("date", information[4]);
+                    properties.put("uid","post" );
+
+                    ref.setValue(properties);
+                }
+
+                @Override
+                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                }
+
+                @Override
+                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+            return ref.toString();
+        }

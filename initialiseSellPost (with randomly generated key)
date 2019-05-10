@@ -1,0 +1,14 @@
+public static String initialiseSellPost(String[] infos) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("SellPost");
+
+        HashMap<String, String> properties = new HashMap<>();
+            properties.put("name", infos[0]);
+            properties.put("category", infos[1]);
+            properties.put("price", infos[2]);
+            properties.put("tags", infos[3]);
+            properties.put("date", infos[4]);
+            properties.put("uid", "post");
+
+        ref.push().setValue(properties);
+        return ref.toString();
+    }

@@ -1,12 +1,12 @@
-public static ArrayList<String> getAllSellPosts() {
-        final ArrayList<String> posts = new ArrayList<>();
-        FirebaseDatabase.getInstance().getReference().child("SellPost").addListenerForSingleValueEvent(new ValueEventListener() {
+public static void getAllSellPosts() {
+        FirebaseDatabase.getInstance().getReference().child("SellPost").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for( DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    if (snapshot.getKey() != null)
-                        posts.add( snapshot.getKey());
-                }      
+                ArrayList<String> tmp;
+                HashMap<String, String> td = (HashMap<String,String>) dataSnapshot.getValue();
+
+                sellPosts = new ArrayList<>(td.keySet());
+                
             }
 
             @Override
@@ -14,5 +14,4 @@ public static ArrayList<String> getAllSellPosts() {
 
             }
         });
-        return posts;
     }

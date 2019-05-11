@@ -79,9 +79,19 @@ public class DatabaseHelper {
     }
 
     //LostPost
+    public static String getLostPostName(String postID) {
+        return FirebaseDatabase.getInstance().getReference().child("LostPost")
+                .child(postID).child("name").toString();
+    }
+
     public static String getLostPostUID(String postID) {
         return FirebaseDatabase.getInstance().getReference().child("LostPost")
                 .child(postID).child("uid").toString();
+    }
+
+    public static String getLostPostCategory(String postID) {
+        return FirebaseDatabase.getInstance().getReference().child("LostPost")
+                .child(postID).child("category").toString();
     }
 
     public static String[] getLostPostTags(String postID) {
@@ -95,25 +105,14 @@ public class DatabaseHelper {
                 .child(postID).child("date").toString();
     }
 
-    public static String getLostPostName(String postID) {
-        return FirebaseDatabase.getInstance().getReference().child("LostPost")
-                .child(postID).child("name").toString();
-    }
-
-    public static String getLostPostCategory(String postID) {
-        return FirebaseDatabase.getInstance().getReference().child("LostPost")
-                .child(postID).child("category").toString();
-    }
-
-    public static String initialiseLostPost() {
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("LostPost")
-                .push();
+    public static String initialiseLostPost( String infos[]) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("LostPost").push();
         HashMap<String, String> properties = new HashMap<>();
-        properties.put("name", "");
-        properties.put("uid", "");
-        properties.put("category", "");
-        properties.put("tags", "");
-        properties.put("date", "");
+        properties.put("name", infos[0]);
+        properties.put("uid", infos[1]);
+        properties.put("category", infos[2]);
+        properties.put("tags", infos[3]);
+        properties.put("price", infos[4]);
         ref.setValue(properties);
 
         return ref.toString();
@@ -165,9 +164,19 @@ public class DatabaseHelper {
     }
 
     //SellPost
+    public static String getSellPostName(String postID) {
+        return FirebaseDatabase.getInstance().getReference().child("SellPost")
+                .child(postID).child("name").toString();
+    }
+
     public static String getSellPostUID(String postID) {
         return FirebaseDatabase.getInstance().getReference().child("SellPost")
                 .child(postID).child("uid").toString();
+    }
+
+    public static String getSellPostCategory(String postID) {
+        return FirebaseDatabase.getInstance().getReference().child("SellPost")
+                .child(postID).child("category").toString();
     }
 
     public static String[] getSellPostTags(String postID) {
@@ -176,30 +185,20 @@ public class DatabaseHelper {
         return s.split("\\W+");
     }
 
-    public static String getSellPostDate(String postID) {
+    public static String getSellPostPrice(String postID) {
         return FirebaseDatabase.getInstance().getReference().child("SellPost")
-                .child(postID).child("date").toString();
+                .child(postID).child("price").toString();
     }
 
-    public static String getSellPostName(String postID) {
-        return FirebaseDatabase.getInstance().getReference().child("SellPost")
-                .child(postID).child("name").toString();
-    }
+    public static String initialiseSellPost(String[] infos) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("SellPost").push();
 
-    public static String getSellPostCategory(String postID) {
-        return FirebaseDatabase.getInstance().getReference().child("SellPost")
-                .child(postID).child("category").toString();
-    }
-
-    public static String initialiseSellPost() {
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("SellPost")
-                .push();
         HashMap<String, String> properties = new HashMap<>();
-        properties.put("name", "");
-        properties.put("uid", "");
-        properties.put("category", "");
-        properties.put("tags", "");
-        properties.put("date", "");
+        properties.put("name", infos[0]);
+        properties.put("uid", infos[1]);
+        properties.put("category", infos[2]);
+        properties.put("tags", infos[3]);
+        properties.put("price", infos[4]);
         ref.setValue(properties);
 
         return ref.toString();
@@ -225,9 +224,9 @@ public class DatabaseHelper {
                 .child(postID).child("tags").setValue(data);
     }
 
-    public static void setSellPostDate(String postID, String data) {
+    public static void setSellPostPrice(String postID, String data) {
         FirebaseDatabase.getInstance().getReference().child("SellPost")
-                .child(postID).child("date").setValue(data);
+                .child(postID).child("price").setValue(data);
     }
 
     private static ArrayList<String> sellPosts;
@@ -249,10 +248,4 @@ public class DatabaseHelper {
                 });
         return sellPosts;
     }
-
-
-//    public static ???? getSellPostImage( String postID ) {
-//        return FirebaseDatabase.getInstance().getReference().child("SellPost")
-//                .child( postID).child("Date").toString();
-//    }
 }

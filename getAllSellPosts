@@ -1,0 +1,18 @@
+public static ArrayList<String> getAllSellPosts() {
+        final ArrayList<String> posts = new ArrayList<>();
+        FirebaseDatabase.getInstance().getReference().child("SellPost").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for( DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    if (snapshot.getKey() != null)
+                        posts.add( snapshot.getKey());
+                }      
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        return posts;
+    }

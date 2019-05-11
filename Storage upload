@@ -1,0 +1,16 @@
+//uriyi aldıktan sonrası
+        StorageReference filePath = FirebaseStorage.getInstance().getReference()
+                .child("Photos").child( DatabaseHelper.getUID());
+        //Dosya ismini
+        //      profil fotosu kımsında uid olarak kaydet
+        //      postlarda post Id sini olarak kaydet
+
+        filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                Uri downloadUri = taskSnapshot.getDownloadUrl(); //bu da indirmek için
+                Toast.makeText(MainActivity.this, "Upload Done", Toast.LENGTH_LONG).show();
+
+            }
+        });

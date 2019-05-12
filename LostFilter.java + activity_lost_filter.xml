@@ -1,0 +1,398 @@
+package com.example.chat;
+
+import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.SeekBar;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class LostFilter extends AppCompatActivity  implements AdapterView.OnItemSelectedListener {
+    Spinner category;
+    TextView timeText;
+    SeekBar timeBar;
+    Button find;
+    FloatingActionButton add;
+    String categorySelect;
+    int progressValue;
+    CheckBox selectAll;
+
+    private NavigationView nav_view;
+    private DrawerLayout dl;
+    private ActionBarDrawerToggle t;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_lost_filter);
+
+        //spinner
+        category = findViewById(R.id.categorySpinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.lostFoundCategories, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        category.setAdapter(adapter);
+        category.setOnItemSelectedListener(this);
+        selectAll = findViewById(R.id.selectAll);
+        //seek bar
+        seekBar();
+        //add and delete buttons
+        addButtonActions();
+        findButtonActions();
+        addNavigationDrawer();
+    }
+
+    public void findButtonActions() {
+        find = findViewById(R.id.findButton);
+        find.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LostFilter.this, FoundItemsPage.class);
+
+                //create item and add extra to intent
+                //Item item = new Item(categorySelect, progressValue);
+                //intent.putExtra("item", item);
+                startActivity(intent);
+            }
+        });
+    }
+
+    public void addButtonActions() {
+        add = findViewById(R.id.floatingActionButton);
+        add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LostFilter.this, FoundAddItem.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    public void seekBar() {
+        timeBar = findViewById(R.id.timeSeekBar);
+        timeText = findViewById(R.id.timeView);
+        //to make the time bar max 1 month the max value is set to 30
+        timeBar.setMax(30);
+        timeBar.setOnSeekBarChangeListener(
+                new SeekBar.OnSeekBarChangeListener() {
+
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                        progressValue = progress;
+                        if (progressValue == 30) {
+                            timeText.setText("Latest: 1 month");
+                        } else if (progressValue == 0 || progressValue == 1) {
+                            timeText.setText("Latest: 1 day");
+                        } else {
+                            timeText.setText("Latest: " + progressValue + " days");
+                        }
+                    }
+
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+                    }
+
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+                        if (progressValue == 30) {
+                            timeText.setText("Latest: 1 month");
+                        } else if (progressValue == 0 || progressValue == 1) {
+                            timeText.setText("Latest: " + progressValue + " day");
+                        } else {
+                            timeText.setText("Latest: " + progressValue + " days");
+                        }
+                    }
+                }
+        );
+
+        if (selectAll.isChecked())
+        {
+            timeBar.setEnabled(false);
+        }
+        else
+        {
+            timeBar.setEnabled(true);
+        }
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        categorySelect = parent.getItemAtPosition(position).toString();
+        //THE SELECTED CATEGORY INFORMATION
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+    }
+
+    private void addNavigationDrawer() {
+        dl = (DrawerLayout) findViewById(R.id.activity_main);
+        t = new ActionBarDrawerToggle(LostFilter.this, dl, R.string.Open, R.string.Close);
+
+        dl.addDrawerListener(t);
+        t.syncState();
+
+        nav_view = (NavigationView) findViewById(R.id.nv);
+        nav_view.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
+                switch (id) {
+                    case R.id.logout:
+                        Toast.makeText(LostFilter.this, "Logout", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.buy_sell:
+                        Toast.makeText(LostFilter.this, "Buy / Sell", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(LostFilter.this, LostFilter.class));
+                        finish();
+                        break;
+                    case R.id.lost_found:
+                        Toast.makeText(LostFilter.this, "Lost & Found", Toast.LENGTH_SHORT).show();
+                        dl.closeDrawers();
+                        break;
+                    case R.id.chats:
+                        Toast.makeText(LostFilter.this, "Chats", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(LostFilter.this, ChatActivity.class));
+                        finish();
+                        break;
+                    case R.id.settings:
+                        Toast.makeText(LostFilter.this, "Settings", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(LostFilter.this, SettingsActivity.class));
+                        finish();
+                        break;
+                    default:
+                        dl.closeDrawers();
+                        return true;
+                }
+                return true;
+            }
+        });
+    }
+}
+
+
+--------------------------------------------------------------------------------------------------------
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+--------------------------------------------------------------------------------------------------------
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorAccent"
+    tools:context=".MainActivity">
+
+<android.support.constraint.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LostFilter">
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="20dp" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="20dp" />
+
+    <TextView
+        android:id="@+id/sellText"
+        android:layout_width="163dp"
+        android:layout_height="29dp"
+        android:text="I FOUND AN ITEM"
+        android:textColor="#000000"
+        android:textSize="18sp"
+        android:textStyle="bold|italic"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.649"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.126"
+        tools:text="I FOUND AN ITEM" />
+
+    <TextView
+        android:id="@+id/buyTitle"
+        android:layout_width="237dp"
+        android:layout_height="48dp"
+        android:text="LOST SOMETHING?"
+        android:textColor="#050505"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.211"
+        tools:text="LOST SOMETHING?" />
+
+    <TextView
+        android:id="@+id/categoriesLost"
+        android:layout_width="119dp"
+        android:layout_height="31dp"
+        android:text="CATEGORIES:"
+        android:textColor="#030303"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.236"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.38"
+        tools:text="CATEGORIES:" />
+
+    <TextView
+        android:id="@+id/priceRange"
+        android:layout_width="146dp"
+        android:layout_height="21dp"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.241"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Time of Loss:" />
+
+    <SeekBar
+        android:id="@+id/timeSeekBar"
+        android:layout_width="249dp"
+        android:layout_height="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.537"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.697" />
+
+    <TextView
+        android:id="@+id/minPrice"
+        android:layout_width="85dp"
+        android:layout_height="26dp"
+        android:text="1 Day"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.248"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.635" />
+
+    <TextView
+        android:id="@+id/maxPrice"
+        android:layout_width="85dp"
+        android:layout_height="27dp"
+        android:text="1 Month"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.797"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.636"
+        tools:text="1 Month" />
+
+    <TextView
+        android:id="@+id/timeView"
+        android:layout_width="150dp"
+        android:layout_height="40dp"
+        android:editable="true"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.562" />
+
+    <Button
+        android:id="@+id/findButton"
+        android:layout_width="130dp"
+        android:layout_height="67dp"
+        android:text="Let's Find!"
+        android:textAllCaps="false"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.855"
+        tools:text="Let's Find!" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.892"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.115"
+        app:srcCompat="@android:drawable/ic_input_add" />
+
+    <Spinner
+        android:id="@+id/categorySpinner"
+        android:layout_width="158dp"
+        android:layout_height="41dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.778"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.385" />
+
+    <CheckBox
+        android:id="@+id/selectAll"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select all dates"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.755" />
+
+</android.support.constraint.ConstraintLayout>
+    <android.support.design.widget.NavigationView
+        android:id="@+id/nv"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/nav_menu">
+
+    </android.support.design.widget.NavigationView>
+
+
+
+
+
+

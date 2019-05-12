@@ -1,0 +1,63 @@
+ArrayList<String> names, description, keys ;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_found_items_page);
+
+        //Intent intent = getIntent();
+        //item = (Item)intent.getSerializableExtra("item");
+
+
+        searchView = findViewById(R.id.searchBar); // inititate a search view
+        //get the string from search view TODO
+        initialize();
+
+        list = findViewById(R.id.itemsList);
+
+        //make items clickable
+        //TODO pass to chat or the item edit page
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.i(TAG, "IT WORKSSS!!!!");
+                Contacts uploaderUser = new Contacts("elif.kurtay");
+                Intent chatIntent = new Intent( FoundItemsPage.this, ChatActivity.class);
+                chatIntent.putExtra("visit_user_id", "5l93A3K0QjV6gw93uxirnFTH5AE3");
+                chatIntent.putExtra("visit_user_name", "elif.kurtay");
+                startActivity( chatIntent);
+            }
+        });
+    }
+    private void initialize() {
+        names = new ArrayList<>();
+        description = new ArrayList<>();
+        keys = new ArrayList<>();
+
+        FirebaseDatabase.getInstance().getReference().child("LostPost")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        //lostPosts = new ArrayList<>();
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            if( snapshot.hasChild("name") ) {
+                                names.add( snapshot.child("name").getValue().toString() );
+                                keys.add(snapshot.getKey() );
+                                Log.i("list", names.toString());
+                                Log.i("keys:",keys.toString());
+
+                            }
+                            if( snapshot.hasChild("tags") ) {
+                                description.add( snapshot.child("tags").getValue().toString() );
+                                Log.i("list", description.toString());
+                            }
+                            custom = new Custom(FoundItemsPage.this,  names, description);
+                            list.setAdapter(custom);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
+    }

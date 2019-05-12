@@ -1,0 +1,98 @@
+package com.example.bilkentcompanion;
+
+import android.app.Activity;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import java.util.ArrayList;
+
+public class CustomFound extends ArrayAdapter<String> {
+
+    private String[] itemNames;
+    private String[] desc;
+    private String[] dates;
+    //private Integer[] imgId;
+    private Activity context;
+    private String[] uids;
+
+    //public Custom(Activity context, String[] itemNames, String[] desc, Integer[] imgId) {
+    public CustomFound(Activity context, ArrayList<String> itemNames, ArrayList<String> desc, ArrayList<String> dates, ArrayList<String> uids) {
+        super(context, R.layout.listview_layout,itemNames);
+
+        this.context = context;
+
+        this. itemNames = new String[itemNames.size()];
+        for(int i = 0; i < itemNames.size(); i ++)
+        {
+            this.itemNames[i] = itemNames.get(i);
+        }
+
+        this.desc = new String[desc.size()];
+        for(int i = 0; i < desc.size(); i ++)
+        {
+            this.desc[i] = desc.get(i);
+        }
+
+        this. dates = new String[dates.size()];
+        for(int i = 0; i < dates.size(); i ++)
+        {
+            this.dates[i] = dates.get(i);
+        }
+
+        this. uids = new String[uids.size()];
+        for(int i = 0; i < uids.size(); i ++)
+        {
+            this.uids[i] = uids.get(i);
+        }
+    }
+
+
+    @NonNull
+    @Override
+    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+
+        View r = convertView;
+        ViewHolder viewHolder = null;
+        if (r== null)
+        {
+            LayoutInflater layoutInflater = context.getLayoutInflater();
+            r = layoutInflater.inflate(R.layout.listview_layout, null, true);
+            viewHolder = new ViewHolder(r);
+            r.setTag(viewHolder);
+        }
+        else
+        {
+            viewHolder = (ViewHolder) r.getTag();
+        }
+        //viewHolder.iv.setImageResource(imgId[position]);
+        viewHolder.tv1.setText("Item name: " + itemNames[position]);
+        viewHolder.tv2.setText("Description: " + desc[position]);
+        viewHolder.tv3.setText("Date of upload: " + dates[position]);
+        viewHolder.tv4.setText("UID: " + uids[position]);
+
+        return r;
+    }
+    class ViewHolder {
+        TextView tv1;
+        TextView tv2;
+        TextView tv3;
+        TextView tv4;
+        ImageView iv;
+
+        ViewHolder(View v)
+        {
+            tv1 = v.findViewById(R.id.itemName);
+            tv2 = v.findViewById(R.id.description);
+            tv3 = v.findViewById(R.id.extra);
+            tv4 = v.findViewById(R.id.uid);
+            iv = v.findViewById(R.id.image);
+        }
+    }
+}
+

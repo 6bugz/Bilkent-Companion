@@ -1,0 +1,364 @@
+package com.example.chat;
+
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.SeekBar;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class BuyFilter extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+    Spinner category;
+    TextView priceText;
+    SeekBar priceBar;
+    Button find;
+    FloatingActionButton add;
+    String categorySelect;
+    int progressValue;
+
+    private NavigationView nav_view;
+    private DrawerLayout dl;
+    private ActionBarDrawerToggle t;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_buy_filter);
+
+        //spinner
+        category = findViewById(R.id.buySellSpinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.buySellCategories, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        category.setAdapter(adapter);
+        category.setOnItemSelectedListener(this);
+        //seek bar
+        seekBar();
+        //add and delete buttons
+        addButtonActions();
+        findButtonActions();
+        addNavigationDrawer();
+
+    }
+
+    public void findButtonActions() {
+        find = findViewById(R.id.buyButton);
+        find.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(BuyFilter.this, OnSalePage.class);
+                //create item and add extra to intent
+                //Item item = new Item(categorySelect, progressValue);
+                //intent.putExtra("item", item);
+                startActivity(intent);
+            }
+        });
+    }
+
+    public void addButtonActions() {
+        add = findViewById(R.id.floatingActionButton);
+        add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent addingPage = new Intent(BuyFilter.this, SellAddItem.class);
+                startActivity(addingPage);
+            }
+        });
+    }
+
+    public void seekBar() {
+        priceBar = findViewById(R.id.priceBar);
+        priceText = findViewById(R.id.priceTag);
+        //to make the time bar max 1 month the max value is set to 30
+        priceBar.setMax(1000);
+        priceBar.setOnSeekBarChangeListener(
+                new SeekBar.OnSeekBarChangeListener() {
+
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                        progressValue = progress;
+                        priceText.setText("Upper Limit: " + progressValue + " TL");
+
+                    }
+
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+                    }
+
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+                        priceText.setText("Upper Limit: " + progressValue + " TL");
+                    }
+                }
+        );
+
+    }
+
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        categorySelect = parent.getItemAtPosition(position).toString();
+        //THE SELECTED CATEGORY INFORMATION
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+    }
+
+    @Override
+    public void onPointerCaptureChanged(boolean hasCapture) {
+
+    }
+
+    private void addNavigationDrawer() {
+        dl = (DrawerLayout) findViewById(R.id.activity_main);
+        t = new ActionBarDrawerToggle(BuyFilter.this, dl, R.string.Open, R.string.Close);
+
+        dl.addDrawerListener(t);
+        t.syncState();
+
+        nav_view = (NavigationView) findViewById(R.id.nv);
+        nav_view.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
+                switch (id) {
+                    case R.id.logout:
+                        Toast.makeText(BuyFilter.this, "Logout", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.buy_sell:
+                        Toast.makeText(BuyFilter.this, "Buy / Sell", Toast.LENGTH_SHORT).show();
+                        dl.closeDrawers();
+                        break;
+                    case R.id.lost_found:
+                        Toast.makeText(BuyFilter.this, "Lost & Found", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(BuyFilter.this, LostFilter.class));
+                        finish();
+                        break;
+                    case R.id.chats:
+                        Toast.makeText(BuyFilter.this, "Chats", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(BuyFilter.this, ChatActivity.class));
+                        finish();
+                        break;
+                    case R.id.settings:
+                        Toast.makeText(BuyFilter.this, "Settings", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(BuyFilter.this, SettingsActivity.class));
+                        finish();
+                        break;
+                    default:
+                        dl.closeDrawers();
+                        return true;
+                }
+                return true;
+            }
+        });
+    }
+}
+
+
+
+---------------------------------------------------------------------------------------
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+---------------------------------------------------------------------------------------
+
+
+
+
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorAccent"
+    tools:context=".MainActivity">
+
+<android.support.constraint.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".BuyFilter">
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="20dp" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="20dp" />
+
+    <TextView
+        android:id="@+id/sellText"
+        android:layout_width="223dp"
+        android:layout_height="45dp"
+        android:text="I WANT TO SELL AN ITEM"
+        android:textColor="#000000"
+        android:textSize="18sp"
+        android:textStyle="bold|italic"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.113"
+        tools:text="I WANT TO SELL AN ITEM" />
+
+    <TextView
+        android:id="@+id/filterTitle"
+        android:layout_width="316dp"
+        android:layout_height="51dp"
+        android:text="WANT TO BUY SOMETHING?"
+        android:textColor="#050505"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.6"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.242"
+        tools:text="WANT TO BUY SOMETHING?" />
+
+    <TextView
+        android:id="@+id/categoriesLost"
+        android:layout_width="119dp"
+        android:layout_height="31dp"
+        android:text="CATEGORIES:"
+        android:textColor="#030303"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.236"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.38"
+        tools:text="CATEGORIES:" />
+
+    <TextView
+        android:id="@+id/priceRange"
+        android:layout_width="146dp"
+        android:layout_height="21dp"
+        android:text="Price Range:"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.241"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/minPrice"
+        android:layout_width="85dp"
+        android:layout_height="26dp"
+        android:text="0 TL"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.248"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.673" />
+
+    <TextView
+        android:id="@+id/maxPrice"
+        android:layout_width="85dp"
+        android:layout_height="27dp"
+        android:text="1000 TL"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.828"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.673" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.892"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.115"
+        app:srcCompat="@android:drawable/ic_input_add" />
+
+    <SeekBar
+        android:id="@+id/priceBar"
+        android:layout_width="267dp"
+        android:layout_height="23dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.737" />
+
+    <Button
+        android:id="@+id/buyButton"
+        android:layout_width="106dp"
+        android:layout_height="52dp"
+        android:text="Let's Buy!"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.854" />
+
+    <TextView
+        android:id="@+id/priceTag"
+        android:layout_width="246dp"
+        android:layout_height="39dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.563"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.57" />
+
+    <Spinner
+        android:id="@+id/buySellSpinner"
+        android:layout_width="168dp"
+        android:layout_height="52dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.783"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.391" />
+
+</android.support.constraint.ConstraintLayout>
+    <android.support.design.widget.NavigationView
+        android:id="@+id/nv"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/nav_menu">
+
+    </android.support.design.widget.NavigationView>
+</android.support.v4.widget.DrawerLayout>

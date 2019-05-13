@@ -1,0 +1,55 @@
+------------------colors--------------
+
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#9C27B0</color>
+    <color name="colorLightPrimary">#E1BEE7</color>
+    <color name="colorPrimaryDark">#7B1FA2</color>
+    <color name="colorAccent">#FFFF</color>
+</resources>
+
+----------------styles----------------
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimary">@color/colorLightPrimary</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AlertDialog" parent = "Base.Theme.AppCompat.Light.Dialog" ></style>
+
+</resources>
+
+------------background for bilkent logo-------------
+
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ic_launcher_background">#1224A6</color>
+</resources>
+
+---------------nav_header.xml------------------
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="start"
+    android:background="@color/colorPrimaryDark">
+    <ImageView
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:layout_marginBottom="15dp"
+        android:layout_marginTop="15dp"
+        android:background="@mipmap/ic_launcher"
+        android:contentDescription="TODO" />
+
+</LinearLayout>
+
+
+-------------bilkent logo-----------------
+bi tane png indirip drawable>new>image asset diyip ekledim. Background color'ı yukarda. ismi ise ic_launcher.

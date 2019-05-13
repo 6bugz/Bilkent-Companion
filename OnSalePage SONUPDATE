@@ -1,0 +1,131 @@
+package com.example.bilkentcompanion;
+
+import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.SearchView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+
+public class OnSalePage extends AppCompatActivity {
+
+    TextView title;
+    String category;
+    int price;
+    ListView list;
+    ArrayAdapter adapter;
+    private String TAG;
+    SearchView searchView;
+    ArrayList<String> names, description, keys , prices, uids;
+
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_on_sale_page);
+
+        Intent intent = getIntent();
+        category = intent.getStringExtra("category");
+        price = intent.getIntExtra("price", 0);
+        Log.i("sell", category + price);
+
+        list = findViewById(R.id.itemsList);
+
+        initialize();
+
+        //make items clickable
+        //TODO pass to chat or the item edit page
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.i("uid", uids.get(position));
+                /*
+
+                //TODO if(currentUserID.equals()) //burayı bilemedim
+                {
+                    Intent i = new Intent(OnSalePage.this, EditPageSell.class);
+                    i.putExtra("name", names.get(position));
+                    i.putExtra("description", description.get(position));
+                    i.putExtra("price", prices.get(position));
+                    i.putExtra("key", keys.get(position));
+                    startActivity(i);
+                }
+                else
+                {
+                    //BURASI CHATE BAĞLANACAK
+                 */
+            }
+        });
+    }
+
+    private void initialize() {
+        names = new ArrayList<>();
+        description = new ArrayList<>();
+        prices = new ArrayList<>();
+        keys = new ArrayList<>();
+        uids = new ArrayList<>();
+
+        FirebaseDatabase.getInstance().getReference().child("SellPost")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+                            if (snapshot.hasChild("category")) {
+                                String cat = snapshot.child("category").getValue().toString();
+                                Log.i("sell", cat);
+                                if (category.equals(cat) || category.equals("all")) {
+                                    if (snapshot.hasChild("price")) {
+                                        String priceString = snapshot.child("price").getValue().toString();
+                                        Log.i("sell", priceString);
+                                        int itemPrice = Integer.parseInt(priceString);
+                                        Log.i("sell", itemPrice + "");
+                                        Log.i("sell", "" + (itemPrice <= price));
+
+                                        if (itemPrice <= price) {
+                                            names.add(snapshot.child("name").getValue().toString());
+                                            description.add(snapshot.child("tags").getValue().toString());
+                                            prices.add(snapshot.child("price").getValue().toString());
+                                            keys.add(snapshot.child("key").getValue().toString());
+                                            uids.add(snapshot.child("uid").getValue().toString());
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        Custom custom = new Custom(OnSalePage.this, names, description, prices, uids, keys);
+                        list.setAdapter(custom);
+                    }
+
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
+    }
+
+
+}
+

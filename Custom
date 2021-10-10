@@ -20,7 +20,7 @@ public class Custom extends ArrayAdapter<String> {
     //private Integer[] imgId;
     private Activity context;
     private String[] uids;
-
+    private Integer[] imgIds;
 
         public Custom(Activity context, ArrayList<String> itemNames, ArrayList<String> desc, ArrayList<String> prices, ArrayList<String> uids) {
             super(context, R.layout.listview_layout,itemNames);
@@ -75,7 +75,8 @@ public class Custom extends ArrayAdapter<String> {
         viewHolder.tv2.setText("Description: " + desc[position]);
         viewHolder.tv3.setText("Price: " + prices[position]);
         viewHolder.tv4.setText("User id: " + uids[position]);
-
+        //viewHolder.iv.setImageResourse(imgIds[position]);
+        
         return r;
     }
     class ViewHolder {
